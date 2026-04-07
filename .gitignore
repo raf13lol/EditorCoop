@@ -1,0 +1,11 @@
+bin/*
+obj/*
+
+lib/*.dll
+
+.vscode/*
+.idea/*
+.vs/*
+
+com.rhythmdr.editorcoop.dll
+com.rhythmdr.bpe5editorcoop.dll
