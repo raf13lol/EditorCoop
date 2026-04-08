@@ -10,11 +10,6 @@ namespace Network.Packets;
 
 public class PacketBinary
 {
-    private const BindingFlags AccessFlags = BindingFlags.Public
-                                            | BindingFlags.NonPublic
-                                            | BindingFlags.Static
-                                            | BindingFlags.Instance;
-
     private static readonly Dictionary<Type, ConstructorInfo> ListConstructors = [];
 
     public static readonly List<IPacketProvider> Providers = [
