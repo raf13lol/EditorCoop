@@ -12,6 +12,8 @@ public class CheckVersionPacket : Packet
     public override void Decode(BinaryReader reader)
     {
         IsEditorLobby = reader.ReadBoolean();
+        if (!IsEditorLobby)
+            return;
         Commit = reader.ReadString();
         PluginVersion = reader.ReadString();
     }

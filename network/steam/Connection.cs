@@ -8,7 +8,7 @@ using Steamworks;
 
 namespace Network.Steam;
 
-public class Connection
+public class Connection : IDisposable
 {
     public SteamNetworkingIdentity User;
 
@@ -34,6 +34,12 @@ public class Connection
     {
         User = sessionRequest.m_identityRemote;
         SteamNetworkingMessages.AcceptSessionWithUser(ref User);
+    }
+
+    public void Dispose()
+    {
+        SteamNetworkingMessages.CloseSessionWithUser(ref User);
+        System.GC.SuppressFinalize(this);
     }
 
     public void UpdateCallbacks()

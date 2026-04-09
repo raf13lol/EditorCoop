@@ -5,5 +5,8 @@ public class Lobby
     public static bool InLobby = false;
     public static bool IsHost = false;
 
-    public static 
+    public static void CreateLobby()
+    {
+        
+    }
 }
