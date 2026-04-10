@@ -11,17 +11,29 @@ namespace Network.Steam;
 public class Connection : IDisposable
 {
     public SteamNetworkingIdentity User;
+    public ulong UserID => User.GetSteamID64();
 
-    public delegate void ReadPacketCallback(Packet packet);
-    public event ReadPacketCallback OnReadPacket;
+    public delegate void PacketReadCallback(Packet packet, ulong userID);
+    public event PacketReadCallback OnPacketRead;
 
     private readonly IntPtr[] MessagePointers = new IntPtr[16];
 
     public Connection(SteamNetworkingIdentity user)
     {
         User = user;
-        
-        // also requests a session
+        SendCheckVersionPacket();
+    }
+
+    public Connection(ulong steamID)
+    {
+        User = new();
+        User.SetSteamID64(steamID);
+        SendCheckVersionPacket();
+    }
+
+    private void SendCheckVersionPacket()
+    {
+         // also requests a session
         SendPacket(new CheckVersionPacket()
         {
             IsEditorLobby = true,
@@ -44,10 +56,10 @@ public class Connection : IDisposable
 
     public void UpdateCallbacks()
     {
-        if (OnReadPacket == null)
+        if (OnPacketRead == null)
             return;
         foreach (Packet packet in ReadPackets())
-            OnReadPacket.Invoke(packet);
+            OnPacketRead.Invoke(packet, UserID);
     }
 
     public Packet[] ReadPackets()

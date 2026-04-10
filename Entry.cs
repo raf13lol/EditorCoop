@@ -51,7 +51,7 @@ public class Entry : BaseUnityPlugin
 
         Patch.Log = Logger;
 
-        // HarmonyPatcher.PatchAll(typeof());
+        TestPatch.Patch(HarmonyPatcher);
     }
 }
 
