@@ -6,7 +6,6 @@ using BepInEx.Unity.Mono;
 #endif
 using EditorCoop.Functionality;
 using EditorCoop.Functionality.Network;
-using EditorCoop.Functionality.Network.Packets;
 using HarmonyLib;
 using Network.Packets;
 using Network.Steam;

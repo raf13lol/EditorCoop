@@ -4,7 +4,7 @@ using Network.Packets;
 
 namespace EditorCoop.Functionality.Network.Packets;
 
-public class TestPacket() : Packet(PacketType.Test)
+public class TestPacket() : Packet
 {
     public string RandomString;
 

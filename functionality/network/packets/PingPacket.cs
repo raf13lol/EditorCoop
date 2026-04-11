@@ -4,7 +4,7 @@ using Network.Packets;
 namespace EditorCoop.Functionality.Network.Packets;
 
 // Empty as this packet exists only to keep connection alive
-public class PingPacket() : Packet(PacketType.Ping)
+public class PingPacket() : Packet
 {
     public override void Decode(BinaryReader reader)
     {

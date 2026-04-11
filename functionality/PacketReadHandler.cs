@@ -11,20 +11,21 @@ public class PacketReadHandler
     {
         Patch.Log.LogMessage("OPR called");
         bool isHost = Lobby.IsHost;
-        Patch.Log.LogMessage($"Packet {packet.Type} received");
+        Patch.Log.LogMessage($"Packet {packet.GetType().Name} received");
 
-        switch (packet.Type)
+        if (packet is TestPacket testPacket)
         {
-            case PacketType.Test:
-                Patch.Log.LogMessage($"TestPacket: Rand string = {((TestPacket)packet).RandomString}");
-                break;
-            case PacketType.Ping:
-                Patch.Log.LogMessage($"PingPacket received");
-                break;
-            default:
-                Patch.Log.LogWarning($"No handler for {packet.Type}");
-                break;
+            Patch.Log.LogMessage($"TestPacket: Rand string = {testPacket.RandomString}");
+            return;
         }
+
+        if (packet is PingPacket)
+        {
+            Patch.Log.LogMessage($"PingPacket received");
+            return;
+        }
+
+        Patch.Log.LogWarning($"No handler for {packet.GetType().Name}");
     }
     
     public static void HandleReplication(Packet packet, SteamNetworkingIdentity originalUser)
@@ -34,12 +35,8 @@ public class PacketReadHandler
             return;
 
         // some packets are not to be replicated
-        switch (packet.Type)
-        {
-            case PacketType.Ping:
-            case PacketType.__Template:
-                return;
-        }
+        if (packet is PingPacket)
+            return;
 
         foreach (SteamNetworkingIdentity user in Lobby.Connection.Users)
         {

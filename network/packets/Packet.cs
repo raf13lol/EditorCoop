@@ -6,10 +6,8 @@ using EditorCoop.Functionality.Network.Packets;
 
 namespace Network.Packets;
 
-public abstract class Packet(PacketType type)
+public abstract class Packet
 {
-    public PacketType Type = type;
-
     public abstract void Decode(BinaryReader reader);
     public abstract void Encode(BinaryWriter writer);
 

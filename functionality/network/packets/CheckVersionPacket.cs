@@ -3,7 +3,7 @@ using Network.Packets;
 
 namespace EditorCoop.Functionality.Network.Packets;
 
-public class CheckVersionPacket() : Packet(PacketType.CheckVersion)
+public class CheckVersionPacket() : Packet
 {
     // Made for compat reasons with Multiplayer mod, but i need to make it compatible with this....
     public bool IsEditorLobby;
