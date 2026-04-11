@@ -1,8 +1,9 @@
 using System.IO;
+using Network.Packets;
 
-namespace Network.Packets.Types;
+namespace EditorCoop.Functionality.Network.Packets;
 
-public class CheckVersionPacket : Packet
+public class CheckVersionPacket() : Packet(PacketType.CheckVersion)
 {
     // Made for compat reasons with Multiplayer mod, but i need to make it compatible with this....
     public bool IsEditorLobby;

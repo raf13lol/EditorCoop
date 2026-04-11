@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Network.Packets.Data;
+namespace Network.Packets;
 
 public interface IPacketData
 {

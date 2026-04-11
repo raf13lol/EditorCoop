@@ -1,9 +1,9 @@
 using System.IO;
+using Network.Packets;
 
-namespace Network.Packets.Types;
+namespace EditorCoop.Functionality.Network.Packets;
 
-// Empty as this packet exists only to keep connection alive
-public class PingPacket : Packet
+public class TemplatePacket() : Packet(PacketType.__Template)
 {
     public override void Decode(BinaryReader reader)
     {

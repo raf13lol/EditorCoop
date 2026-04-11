@@ -1,10 +1,11 @@
 using System;
 using System.IO;
 using HarmonyLib;
+using Network.Packets;
 using RDLevelEditor;
 using UnityEngine;
 
-namespace Network.Packets.Providers;
+namespace EditorCoop.Functionality.Network;
 
 public class RDPacketProvider : IPacketProvider
 {
@@ -30,8 +31,8 @@ public class RDPacketProvider : IPacketProvider
             float g = reader.ReadSingle();
             float b = reader.ReadSingle();
             float a = reader.ReadSingle();
+            
             Color colour = new(r, g, b, a);
-
             return (ColorOrPalette)colour;
         }
 

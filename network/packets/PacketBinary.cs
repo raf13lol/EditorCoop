@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Network.Packets.Data;
-using Network.Packets.Providers;
 
 namespace Network.Packets;
 
@@ -13,8 +11,7 @@ public class PacketBinary
     private static readonly Dictionary<Type, ConstructorInfo> ListConstructors = [];
 
     public static readonly List<IPacketProvider> Providers = [
-        new LiteralPacketProvider(),
-        new RDPacketProvider(),
+        new LiteralPacketProvider()
     ]; 
 
     public static object Read(BinaryReader reader, Type type)

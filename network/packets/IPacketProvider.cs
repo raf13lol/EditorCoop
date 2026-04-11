@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Network.Packets.Providers;
+namespace Network.Packets;
 
 public interface IPacketProvider
 {
