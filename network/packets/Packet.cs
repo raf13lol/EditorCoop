@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using EditorCoop;
 using EditorCoop.Functionality.Network.Packets;
 
 namespace Network.Packets;
@@ -11,17 +12,34 @@ public abstract class Packet
     public abstract void Decode(BinaryReader reader);
     public abstract void Encode(BinaryWriter writer);
 
-    private static readonly Type[] AssemblyTypes = Assembly.GetAssembly(typeof(Packet)).GetTypes();
+    public static Type[] AssemblyTypes;
 
-    public static Packet Decode(byte[] data, Type packetTypeEnum, Type[]? typesToSearch = null)
+    internal byte PacketTypeByte;
+    
+    protected Packet(object packetType)
     {
-        typesToSearch ??= AssemblyTypes;
+        PacketTypeByte = (byte)packetType;
+    }
 
+    public static byte[] Encode(Packet packet)
+    {
+        using MemoryStream stream = new();
+        using BinaryWriter writer = new(stream);
+
+        writer.Write(packet.PacketTypeByte);
+        packet.Encode(writer);
+
+        return stream.GetBuffer();
+    }
+
+    public static Packet Decode(byte[] data, Type packetTypeEnum)
+    {
         using MemoryStream stream = new(data);
         using BinaryReader reader = new(stream);
 
-        object packetType = Convert.ChangeType(reader.ReadByte(), packetTypeEnum);
-        Type classType = typesToSearch.First(t => t.Name == $"{packetType}Packet");
+        byte packetTypeByte = reader.ReadByte();
+        string packetType = Enum.GetName(packetTypeEnum, packetTypeByte);
+        Type classType = AssemblyTypes.First(t => t.Name == $"{packetType}Packet");
 
         Packet packet = (Packet)Activator.CreateInstance(classType);
         packet.Decode(reader);

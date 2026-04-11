@@ -1,5 +1,6 @@
 using System;
 using EditorCoop;
+using Network.Packets;
 using Steamworks;
 
 namespace Network.Steam;
@@ -16,6 +17,7 @@ public class Lobby
     public static CSteamID LobbySteamID = new(0ul);
 
     public static event Connection.PacketReadCallback PacketReadCallback;
+    public static event Connection.DataReadCallback DataReadCallback;
 
     private static CallResult<LobbyCreated_t> LobbyCreatedResult;
 
@@ -86,6 +88,14 @@ public class Lobby
         Connection.Dispose();
     }
 
+    public static bool SendPacketToAll(Packet packet)
+    {
+        bool result = true;
+        foreach (SteamNetworkingIdentity user in Connection.Users)
+           result = Connection.Send(packet, user) && result;
+        return result;
+    }
+
     private static void LobbyCreated(LobbyCreated_t result, bool error)
     {
         Patch.Log.LogMessage($"Lobby {result.m_ulSteamIDLobby} created");
@@ -107,8 +117,8 @@ public class Lobby
 
     private static void LobbyChatUpdate(LobbyChatUpdate_t message)
     {
-        Patch.Log.LogMessage($"Lobby {message.m_ulSteamIDLobby} {message.m_rgfChatMemberStateChange} {message.m_ulSteamIDUserChanged} update");
         EChatMemberStateChange stateChange = (EChatMemberStateChange)message.m_rgfChatMemberStateChange;
+        Patch.Log.LogMessage($"Lobby {message.m_ulSteamIDLobby} {stateChange} {message.m_ulSteamIDUserChanged} update");
         CSteamID userAffected = (CSteamID)message.m_ulSteamIDUserChanged;
         if ((stateChange & EChatMemberStateChange.k_EChatMemberStateChangeLeft) > 0)
         {
@@ -146,7 +156,8 @@ public class Lobby
 
     private static Connection SetConnectionOnPacketReadCallback(Connection connection)
     {
-        connection.OnPacketRead += PacketReadCallback;
+        connection.OnPacketRead += PacketReadCallback.Invoke;
+        connection.OnDataRead += DataReadCallback.Invoke;
         return connection;
     }
 }

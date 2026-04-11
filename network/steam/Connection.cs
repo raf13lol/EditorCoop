@@ -18,15 +18,15 @@ public class Connection : IDisposable
     public List<SteamNetworkingIdentity> Users = [];
 
     public delegate void PacketReadCallback(Packet packet, SteamNetworkingIdentity user);
-    public event PacketReadCallback OnPacketRead;
-
-    public List<CancellationTokenSource> PingCancellationTokenSources;
+    public delegate void DataReadCallback(byte[] data, SteamNetworkingIdentity user);
+    
+    internal event PacketReadCallback OnPacketRead;
+    internal event DataReadCallback OnDataRead;
 
     private readonly IntPtr[] MessagePointers = new IntPtr[16];
 
     public Connection()
     {
-        PingCancellationTokenSources = [];
     }
 
     public Connection(SteamNetworkingMessagesSessionRequest_t sessionRequest) : this()
@@ -38,36 +38,14 @@ public class Connection : IDisposable
         clone.SetSteamID64(user.GetSteamID64());
 
         Users.Add(clone);
-        AddPingTaskForUser(user);
-    }
-    
-    public void AddPingTaskForUser(SteamNetworkingIdentity user)
-    {
-        CancellationTokenSource cancellationTokenSource = new();
-        PingCancellationTokenSources.Add(cancellationTokenSource);
-
-        Task.Run(async delegate
-        {
-            // Don't like this but it's the cleanest shit we got
-            bool firstRun = true;
-            while (cancellationTokenSource.IsCancellationRequested)
-            {
-                if (!firstRun)
-                    SendPacket(new PingPacket(), user);
-
-                await Task.Delay(60 * 1000, cancellationTokenSource.Token);
-                firstRun = false;
-            }
-        }, cancellationTokenSource.Token);
     }
 
     public void SendCheckVersionPacket(SteamNetworkingIdentity user)
     {
         Users.Add(user);
-        AddPingTaskForUser(user);
 
         // also requests a session
-        SendPacket(new CheckVersionPacket()
+        Send(new CheckVersionPacket()
         {
             IsEditorLobby = true,
             Commit = Releases.buildCommit,
@@ -81,9 +59,6 @@ public class Connection : IDisposable
         {
             SteamNetworkingIdentity user = Users[i];
             SteamNetworkingMessages.CloseSessionWithUser(ref user);
-
-            CancellationTokenSource cancellationTokenSource = PingCancellationTokenSources[i];
-            cancellationTokenSource.Cancel();
         }
 
         System.GC.SuppressFinalize(this);
@@ -98,19 +73,15 @@ public class Connection : IDisposable
                 continue;
 
             SteamNetworkingMessages.CloseSessionWithUser(ref user);
-            
-            CancellationTokenSource cancellationTokenSource = PingCancellationTokenSources[i];
-            cancellationTokenSource.Cancel();
 
             Users.RemoveAt(i);
-            PingCancellationTokenSources.RemoveAt(i);
             return;
         }
     }
 
     public void ReadPackets()
     {
-        int messageCount = SteamNetworkingMessages.ReceiveMessagesOnChannel(0, MessagePointers, MessagePointers.Length);
+        int messageCount = SteamNetworkingMessages.ReceiveMessagesOnChannel(1, MessagePointers, MessagePointers.Length);
         for (int i = 0; i < messageCount; i++)
         {
             IntPtr pointer = MessagePointers[i];
@@ -118,27 +89,26 @@ public class Connection : IDisposable
 
             byte[] buffer = new byte[message.m_cbSize];
             Marshal.Copy(message.m_pData, buffer, 0, message.m_cbSize);
-
+            
             Packet packet = Packet.Decode(buffer, PacketTypeEnum);
             OnPacketRead.Invoke(packet, message.m_identityPeer);
+            OnDataRead.Invoke(buffer, message.m_identityPeer);
 
             SteamNetworkingMessage_t.Release(pointer);
         }
     }
 
-    public bool SendPacket(Packet packet, SteamNetworkingIdentity user)
-    {
-        using MemoryStream stream = new();
-        using BinaryWriter writer = new(stream);
-        packet.Encode(writer);
+    public bool Send(Packet packet, SteamNetworkingIdentity user)
+        => Send(Packet.Encode(packet), user);
 
-        byte[] data = stream.GetBuffer();
+    public bool Send(byte[] data, SteamNetworkingIdentity user)
+    {
         EResult result;
 
         unsafe
         {
             fixed (byte* pointer = data)
-                result = SteamNetworkingMessages.SendMessageToUser(ref user, (IntPtr)pointer, (uint)data.Length, (int)MessageFlags.Reliable, 0);
+                result = SteamNetworkingMessages.SendMessageToUser(ref user, (IntPtr)pointer, (uint)data.Length, (int)MessageFlags.Reliable, 1);
         }
 
         return result == EResult.k_EResultOK;

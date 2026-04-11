@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 #if !BPE5
@@ -6,6 +7,7 @@ using BepInEx.Unity.Mono;
 #endif
 using EditorCoop.Functionality;
 using EditorCoop.Functionality.Network;
+using EditorCoop.Functionality.Network.Packets;
 using HarmonyLib;
 using Network.Packets;
 using Network.Steam;
@@ -50,11 +52,12 @@ public class Entry : BaseUnityPlugin
         }
 
         // Functionality init
+        Packet.AssemblyTypes = Assembly.GetAssembly(typeof(PacketType)).GetTypes();
         PacketBinary.Providers.Add(new RDPacketProvider());
         Connection.PacketTypeEnum = typeof(PacketType);
 
         Lobby.PacketReadCallback += PacketReadHandler.OnPacketRead;
-        Lobby.PacketReadCallback += PacketReadHandler.HandleReplication;
+        Lobby.DataReadCallback += PacketReadHandler.HandleReplication;
 
         // Mod patching init
         HarmonyPatcher = new("EC");

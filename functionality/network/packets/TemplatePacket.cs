@@ -3,7 +3,7 @@ using Network.Packets;
 
 namespace EditorCoop.Functionality.Network.Packets;
 
-public class TemplatePacket() : Packet
+public class TemplatePacket() : Packet(PacketType.__Template)
 {
     public override void Decode(BinaryReader reader)
     {

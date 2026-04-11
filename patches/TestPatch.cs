@@ -1,3 +1,4 @@
+using EditorCoop.Functionality.Network.Packets;
 using HarmonyLib;
 using Network.Steam;
 using UnityEngine;
@@ -21,14 +22,17 @@ public class TestPatch : Patch
         }
     }
 
-    [HarmonyPatch(typeof(RDBase), "Update")]
+    [HarmonyPatch(typeof(scnBase), "Update")]
     public class TestCreateSteamLobbyPatch
     {
         public static void Postfix()
         {
-            if (!Input.GetKey(KeyCode.F6))
-                return;
-            Lobby.CreateLobby();
+            SteamIntegration.CheckCallbacks();
+            Lobby.Connection?.ReadPackets();
+            if (Input.GetKey(KeyCode.F6))
+                Lobby.CreateLobby();
+            if (Input.GetKeyDown(KeyCode.F2))
+                Lobby.SendPacketToAll(new TestPacket());
         }
     }
 }

@@ -2,6 +2,7 @@ using Network.Packets;
 using EditorCoop.Functionality.Network.Packets;
 using Network.Steam;
 using Steamworks;
+using EditorCoop.Functionality.Network;
 
 namespace EditorCoop.Functionality;
 
@@ -19,30 +20,25 @@ public class PacketReadHandler
             return;
         }
 
-        if (packet is PingPacket)
-        {
-            Patch.Log.LogMessage($"PingPacket received");
-            return;
-        }
-
         Patch.Log.LogWarning($"No handler for {packet.GetType().Name}");
     }
     
-    public static void HandleReplication(Packet packet, SteamNetworkingIdentity originalUser)
+    public static void HandleReplication(byte[] data, SteamNetworkingIdentity originalUser)
     {
         Patch.Log.LogMessage("HR called");        
         if (!Lobby.IsHost)
             return;
 
+        PacketType type = (PacketType)data[0];
         // some packets are not to be replicated
-        if (packet is PingPacket)
-            return;
+        // if (type == PacketType.Ping)
+            // return;
 
         foreach (SteamNetworkingIdentity user in Lobby.Connection.Users)
         {
-            if (originalUser.Equals(user))
+            if (originalUser.GetSteamID64() == user.GetSteamID64())
                 continue;
-            Lobby.Connection.SendPacket(packet, user);
+            Lobby.Connection.Send(data, user);
         }
     }
 }

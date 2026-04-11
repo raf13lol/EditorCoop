@@ -3,6 +3,8 @@ namespace EditorCoop.Functionality.Network;
 public enum PacketType : byte
 {
     CheckVersion,
+    
+    RequestLevel,
     SyncLevel,
 
     CreateEvents,
@@ -20,13 +22,7 @@ public enum PacketType : byte
     MoveSprites,
     DeleteSprites,
 
-    
-    
-
     Test,
-
-
-    Ping,
 
     __Template,
 }
