@@ -7,19 +7,14 @@ using EditorCoop.Functionality.Network.Packets;
 
 namespace Network.Packets;
 
-public abstract class Packet
+public abstract class Packet(object packetType)
 {
+    public byte PacketTypeByte = (byte)packetType;
+
     public abstract void Decode(BinaryReader reader);
     public abstract void Encode(BinaryWriter writer);
 
     public static Type[] AssemblyTypes;
-
-    internal byte PacketTypeByte;
-    
-    protected Packet(object packetType)
-    {
-        PacketTypeByte = (byte)packetType;
-    }
 
     public static byte[] Encode(Packet packet)
     {

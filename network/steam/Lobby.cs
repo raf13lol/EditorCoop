@@ -135,7 +135,7 @@ public class Lobby
                 return;
             SteamNetworkingIdentity newUser = new();
             newUser.SetSteamID64(message.m_ulSteamIDUserChanged); 
-            Connection.SendCheckVersionPacket(newUser);
+            Connection.SendSessionInitPacket(newUser);
             return;
         }
     }

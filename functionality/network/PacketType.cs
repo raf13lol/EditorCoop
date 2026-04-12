@@ -22,7 +22,9 @@ public enum PacketType : byte
     MoveSprites,
     DeleteSprites,
 
-    Test,
+    RequestAssetHashes,
+    RequestAssets,
+    SyncAssets,
 
     __Template,
 }

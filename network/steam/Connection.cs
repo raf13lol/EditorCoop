@@ -14,6 +14,7 @@ namespace Network.Steam;
 public class Connection : IDisposable
 {
     public static Type PacketTypeEnum;
+    public static Packet SessionInitPacket;
 
     public List<SteamNetworkingIdentity> Users = [];
 
@@ -40,17 +41,12 @@ public class Connection : IDisposable
         Users.Add(clone);
     }
 
-    public void SendCheckVersionPacket(SteamNetworkingIdentity user)
+    public void SendSessionInitPacket(SteamNetworkingIdentity user)
     {
         Users.Add(user);
 
         // also requests a session
-        Send(new CheckVersionPacket()
-        {
-            IsEditorLobby = true,
-            Commit = Releases.buildCommit,
-            PluginVersion = MyPluginInfo.PLUGIN_VERSION
-        }, user);
+        Send(SessionInitPacket, user);
     }
 
     public void Dispose()

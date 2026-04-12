@@ -3,36 +3,61 @@ using EditorCoop.Functionality.Network.Packets;
 using Network.Steam;
 using Steamworks;
 using EditorCoop.Functionality.Network;
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace EditorCoop.Functionality;
 
 public class PacketReadHandler
 {
+    public static Dictionary<PacketType, MethodInfo> HandlePacketMethods = [];
+
     public static void OnPacketRead(Packet packet, SteamNetworkingIdentity user)
     {
         Patch.Log.LogMessage("OPR called");
-        bool isHost = Lobby.IsHost;
         Patch.Log.LogMessage($"Packet {packet.GetType().Name} received");
 
-        if (packet is TestPacket testPacket)
+        PacketType packetType = (PacketType)packet.PacketTypeByte;
+        if (!HandlePacketMethods.TryGetValue(packetType, out MethodInfo handlePacketMethod))
         {
-            Patch.Log.LogMessage($"TestPacket: Rand string = {testPacket.RandomString}");
+            string packetTypeName = packetType.ToString();
+            Type? packetHandler = null;
+            foreach (Type t in Packet.AssemblyTypes)
+            {
+                if (t.Name != $"{packetTypeName}Handler")
+                    continue;
+                packetHandler = t;
+                break;
+            }
+
+            handlePacketMethod = packetHandler?.GetMethod("Run", BindingFlags.Public | BindingFlags.Static);
+            HandlePacketMethods[packetType] = handlePacketMethod;
+        }
+
+        if (handlePacketMethod == null)
+        {
+            Patch.Log.LogWarning($"No handler for {packet.GetType().Name}");
             return;
         }
 
-        Patch.Log.LogWarning($"No handler for {packet.GetType().Name}");
+        if (handlePacketMethod.GetParameters().Length == 2)
+            handlePacketMethod.Invoke(null, [packet, user]);
+        else    
+            handlePacketMethod.Invoke(null, [packet]);
     }
-    
+
     public static void HandleReplication(byte[] data, SteamNetworkingIdentity originalUser)
     {
-        Patch.Log.LogMessage("HR called");        
+        Patch.Log.LogMessage("HR called");
         if (!Lobby.IsHost)
             return;
 
         PacketType type = (PacketType)data[0];
         // some packets are not to be replicated
         // if (type == PacketType.Ping)
-            // return;
+        // return;
 
         foreach (SteamNetworkingIdentity user in Lobby.Connection.Users)
         {

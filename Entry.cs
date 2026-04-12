@@ -54,6 +54,7 @@ public class Entry : BaseUnityPlugin
         // Functionality init
         Packet.AssemblyTypes = Assembly.GetAssembly(typeof(PacketType)).GetTypes();
         PacketBinary.Providers.Add(new RDPacketProvider());
+
         Connection.PacketTypeEnum = typeof(PacketType);
 
         Lobby.PacketReadCallback += PacketReadHandler.OnPacketRead;
@@ -65,7 +66,7 @@ public class Entry : BaseUnityPlugin
         PluginInfo = Info;
         Patch.Log = Logger;
 
-        TestPatch.Patch(HarmonyPatcher);
+        SteamPatch.Patch(HarmonyPatcher);
     }
 }
 
