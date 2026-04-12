@@ -1,6 +1,6 @@
 using HarmonyLib;
 
-namespace EditorCoop;
+namespace EditorCoop.Patches;
 
 public class TemplatePatch : Patch
 {

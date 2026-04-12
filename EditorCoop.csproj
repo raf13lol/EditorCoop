@@ -46,6 +46,9 @@
         <Reference Include="Assembly-CSharp" IncludeAssets="compile">
             <HintPath>lib\Assembly-CSharp.dll</HintPath>
         </Reference>
+        <Reference Include="Assembly-CSharp-firstpass" IncludeAssets="compile">
+            <HintPath>lib\Assembly-CSharp-firstpass.dll</HintPath>
+        </Reference>
         <Reference Include="com.rlabrecque.steamworks.net" IncludeAssets="compile">
             <HintPath>lib\com.rlabrecque.steamworks.net.dll</HintPath>
         </Reference>

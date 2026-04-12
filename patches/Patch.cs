@@ -1,6 +1,6 @@
 using BepInEx.Logging;
 
-namespace EditorCoop;
+namespace EditorCoop.Patches;
 
 public class Patch
 {

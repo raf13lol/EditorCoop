@@ -22,6 +22,16 @@ public enum PacketType : byte
     MoveSprites,
     DeleteSprites,
 
+    CreateWindows,
+    DeleteWindows,
+
+    CreateConditionals,
+    EditConditionals,
+    DeleteConditionals,
+
+    RequestLevelSettings,
+    SyncLevelSettings,
+
     RequestAssetHashes,
     RequestAssets,
     SyncAssets,

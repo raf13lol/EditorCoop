@@ -3,7 +3,7 @@ using HarmonyLib;
 using Network.Steam;
 using UnityEngine;
 
-namespace EditorCoop;
+namespace EditorCoop.Patches;
 
 public class SteamPatch : Patch
 {
