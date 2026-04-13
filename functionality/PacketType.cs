@@ -1,3 +1,5 @@
+
+
 namespace EditorCoop.Functionality;
 
 public enum PacketType : byte

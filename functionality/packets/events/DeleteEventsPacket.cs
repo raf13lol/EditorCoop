@@ -1,21 +1,20 @@
 using System.Collections.Generic;
 using System.IO;
-using EditorCoop.Functionality.Data.Events;
 using Network.Packets;
 
 namespace EditorCoop.Functionality.Packets.Events;
 
-public class CreateEventsPacket() : Packet(PacketType.CreateEvents)
+public class DeleteEventsPacket() : Packet(PacketType.DeleteEvents)
 {
-    public List<EventCreationData> Events;
+    public List<int> UIDs;
 
     public override void Decode(BinaryReader reader)
     {
-        Events = reader.Read<List<EventCreationData>>();
+        UIDs = reader.Read<List<int>>();
     }
 
     public override void Encode(BinaryWriter writer)
     {
-        writer.Write(Events);
+        writer.Write(UIDs);
     }
 }

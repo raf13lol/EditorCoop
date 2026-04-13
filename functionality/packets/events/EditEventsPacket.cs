@@ -5,17 +5,17 @@ using Network.Packets;
 
 namespace EditorCoop.Functionality.Packets.Events;
 
-public class CreateEventsPacket() : Packet(PacketType.CreateEvents)
+public class EditEventsPacket() : Packet(PacketType.EditEvents)
 {
-    public List<EventCreationData> Events;
+    public List<EventEditData> Edits;
 
     public override void Decode(BinaryReader reader)
     {
-        Events = reader.Read<List<EventCreationData>>();
+        Edits = reader.Read<List<EventEditData>>();
     }
 
     public override void Encode(BinaryWriter writer)
     {
-        writer.Write(Events);
+        writer.Write(Edits);
     }
 }

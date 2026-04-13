@@ -3,7 +3,6 @@ using EditorCoop.Compatibility;
 using EditorCoop.Functionality.Data.Events;
 using EditorCoop.Functionality.Packets.Events;
 using RDLevelEditor;
-using UnityEngine;
 
 namespace EditorCoop.Functionality.Handlers.Events;
 
@@ -16,7 +15,7 @@ public class CreateEventsHandler : Handler
             Type newEventType = Type.GetType($"RDLevelEditor.LevelEvent_{newEventData.EventType}, Assembly-CSharp");
             LevelEvent_Base newEvent = (LevelEvent_Base)Activator.CreateInstance(newEventType);
 
-            newEvent.uid = newEventData.EventUID;
+            newEvent.uid = newEventData.UID;
 
             newEvent.bar = newEventData.Bar;
             newEvent.beat = newEventData.Beat;
@@ -26,14 +25,13 @@ public class CreateEventsHandler : Handler
             if (PluginCompatibility.RDEditorPlusDetected)
                 RDEditorPlusCompatibility.SetEventSubRowY(newEvent, newEventData.SubRowY);
 
-            if (newEventData.Row is int row)
-                newEvent.row = row;
+            newEvent.row = newEventData.Row;
             newEvent.target = newEventData.Target;
 
             if (newEventData.CopyEventUID is int copyEventUID
-            && UIDHolder.UIDToEvent.TryGetValue(copyEventUID, out LevelEvent_Base copyEvent))
+            && UIDHolder.UIDToEventControl.TryGetValue(copyEventUID, out LevelEventControl_Base copyControl))
             {
-                newEvent.CopyFromInternal(copyEvent);
+                newEvent.CopyFromInternal(copyControl.levelEvent);
                 if (newEvent is LevelEvent_AddOneshotBeat oneshot)
                     oneshot.CapXPosForPositiveFreezeBurnCueTime();
             }
@@ -48,6 +46,8 @@ public class CreateEventsHandler : Handler
             Editor.UpdateTimelineAccordingToLevelEventType(newEventData.EventType);
 
             FlagUnsavedChanges();
+
+            UIDHolder.StoreEventControl(control);
         }
     }
 }

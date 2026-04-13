@@ -40,7 +40,9 @@ public class PacketReadHandler
             return;
         }
 
+        Patch.HandlerInProgress = true;
         handlePacketMethod.Invoke(null, [packet]);
+        Patch.HandlerInProgress = false;
     }
 
     public static void HandleReplication(byte[] data, SteamNetworkingIdentity originalUser)

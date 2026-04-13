@@ -27,8 +27,13 @@ public class LiteralPacketProvider : IPacketProvider
         if (type == typeof(decimal)) return reader.ReadDecimal();
 
         if (type == typeof(char)) return reader.ReadChar();
-        if (type == typeof(string)) return reader.ReadString();
-        
+        if (type == typeof(string))
+        {
+            if (!reader.ReadNull())
+                return null;
+            return reader.ReadString();
+        }
+
         success = false;
         return 0;
     }
@@ -55,7 +60,13 @@ public class LiteralPacketProvider : IPacketProvider
         if (type == typeof(decimal)) { writer.Write((decimal)value); return; }
 
         if (type == typeof(char)) { writer.Write((char)value); return; }
-        if (type == typeof(string)) { writer.Write((string)value); return; }
+        if (type == typeof(string)) 
+        {
+            if (!writer.WriteNull(value))
+                return; 
+            writer.Write((string)value); 
+            return; 
+        }
 
         success = false;
     }

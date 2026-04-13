@@ -86,13 +86,18 @@ public class Lobby
         InLobby = false;
 
         Connection.Dispose();
+        Connection = null;
     }
 
     public static bool SendPacketToAll(Packet packet)
     {
+        if (Connection == null)
+            return false;
+
+        byte[] data = Packet.Encode(packet);
         bool result = true;
         foreach (SteamNetworkingIdentity user in Connection.Users)
-           result = Connection.Send(packet, user) && result;
+           result = Connection.Send(data, user) && result;
         return result;
     }
 

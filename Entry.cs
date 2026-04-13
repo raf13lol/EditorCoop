@@ -7,6 +7,7 @@ using BepInEx.Unity.Mono;
 #endif
 using EditorCoop.Functionality;
 using EditorCoop.Patches;
+using EditorCoop.Patches.Events;
 using HarmonyLib;
 using Network.Packets;
 using Network.Steam;
@@ -67,6 +68,11 @@ public class Entry : BaseUnityPlugin
 
         SteamPatch.Patch(HarmonyPatcher);
         TestingPatch.Patch(HarmonyPatcher);
+
+        EventCreationPatch.Patch(HarmonyPatcher);
+        EventDeletionPatch.Patch(HarmonyPatcher);
+        EventEditPatch.Patch(HarmonyPatcher);
+        EventMovementPatch.Patch(HarmonyPatcher);
     }
 }
 

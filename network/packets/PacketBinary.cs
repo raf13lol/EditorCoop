@@ -3,18 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using EditorCoop.Patches;
 
 namespace Network.Packets;
 
-public class PacketBinary
+public static class PacketBinary
 {
     private static readonly Dictionary<Type, ConstructorInfo> ListConstructors = [];
 
     public static readonly List<IPacketProvider> Providers = [
         new LiteralPacketProvider()
-    ]; 
+    ];
 
-    public static object Read(BinaryReader reader, Type type)
+    public static bool ReadNull(this BinaryReader reader)
+    {
+        return reader.ReadBoolean();
+    }
+
+    public static object Read(this BinaryReader reader, Type type)
     {
         if (type.IsGenericType)
         {
@@ -23,20 +29,22 @@ public class PacketBinary
 
             if (genericType == typeof(Nullable<>))
             {
-                bool hasValue = reader.ReadBoolean();
-                if (!hasValue)
-                    return null!;
+                if (!reader.ReadNull())
+                    return null;
                 return Read(reader, argumentTypes[0]);
             }
 
             if (genericType == typeof(List<>))
             {
+                if (!reader.ReadNull())
+                    return null;
+
                 Type elementType = argumentTypes[0];
                 if (!ListConstructors.TryGetValue(elementType, out ConstructorInfo? listConstructor))
-                    ListConstructors[elementType] = listConstructor = type.GetConstructor([typeof(int)])!;
+                    ListConstructors[elementType] = listConstructor = type.GetConstructor([typeof(int)]);
 
                 int count = reader.ReadInt32();
-                IList list = (IList)Activator.CreateInstance(type)!;
+                IList list = (IList)Activator.CreateInstance(type);
                 listConstructor.Invoke(list, [count]);
 
                 for (int i = 0; i < count; i++)
@@ -46,12 +54,15 @@ public class PacketBinary
 
             if (genericType == typeof(Dictionary<,>))
             {
+                if (!reader.ReadNull())
+                    return null;
+
                 Type keyType = argumentTypes[0];
                 Type valueType = argumentTypes[1];
 
                 int count = reader.ReadInt32();
-                IDictionary dictionary = (IDictionary)type.GetConstructor([])!.Invoke(null, [])!;
-                
+                IDictionary dictionary = (IDictionary)type.GetConstructor([]).Invoke(null, []);
+
                 for (int i = 0; i < count; i++)
                     dictionary[Read(reader, keyType)] = Read(reader, valueType);
                 return dictionary;
@@ -60,7 +71,10 @@ public class PacketBinary
 
         if (type.BaseType == typeof(Array))
         {
-            Type elementType = type.GetElementType()!;
+            if (!reader.ReadNull())
+                return null;
+
+            Type elementType = type.GetElementType();
 
             int length = reader.ReadInt32();
             Array array = Array.CreateInstance(elementType, length);
@@ -72,7 +86,7 @@ public class PacketBinary
 
         if (type.GetInterface(nameof(IPacketData)) != null)
         {
-            IPacketData data = (IPacketData)Activator.CreateInstance(type)!;
+            IPacketData data = (IPacketData)Activator.CreateInstance(type);
             data.Decode(reader);
             return data;
         }
@@ -89,7 +103,14 @@ public class PacketBinary
         return 0;
     }
 
-    public static void Write(BinaryWriter writer, Type type, object? value)
+    public static bool WriteNull(this BinaryWriter writer, object value)
+    {
+        bool hasValue = value != null;
+        writer.Write(hasValue);
+        return hasValue;
+    }
+
+    public static void Write(this BinaryWriter writer, Type type, object value)
     {
         if (type.IsGenericType)
         {
@@ -98,10 +119,7 @@ public class PacketBinary
 
             if (genericType == typeof(Nullable<>))
             {
-                bool hasValue = value is not null;
-                writer.Write(hasValue);
-
-                if (!hasValue)
+                if (!writer.WriteNull(value))
                     return;
 
                 Write(writer, argumentTypes[0], value);
@@ -110,9 +128,12 @@ public class PacketBinary
 
             if (genericType == typeof(List<>))
             {
+                if (!writer.WriteNull(value))
+                    return;
+
                 Type elementType = argumentTypes[0];
 
-                IList list = (IList)value!;
+                IList list = (IList)value;
                 int count = list.Count;
 
                 writer.Write(count);
@@ -124,10 +145,13 @@ public class PacketBinary
 
             if (genericType == typeof(Dictionary<,>))
             {
+                if (!writer.WriteNull(value))
+                    return;
+
                 Type keyType = argumentTypes[0];
                 Type valueType = argumentTypes[1];
 
-                IDictionary dictionary = (IDictionary)value!;
+                IDictionary dictionary = (IDictionary)value;
                 int count = dictionary.Count;
 
                 writer.Write(count);
@@ -136,16 +160,19 @@ public class PacketBinary
                     Write(writer, keyType, kvp.Key);
                     Write(writer, valueType, kvp.Value);
                 }
-                
+
                 return;
             }
         }
 
         if (type.BaseType == typeof(Array))
         {
-            Type elementType = type.GetElementType()!;
+            if (!writer.WriteNull(value))
+                return;
 
-            Array array = (Array)value!;
+            Type elementType = type.GetElementType();
+
+            Array array = (Array)value;
             int length = array.Length;
 
             writer.Write(length);
@@ -157,7 +184,7 @@ public class PacketBinary
 
         if (type.GetInterface(nameof(IPacketData)) != null)
         {
-            ((IPacketData)value!).Encode(writer);
+            ((IPacketData)value).Encode(writer);
             return;
         }
 
@@ -170,15 +197,15 @@ public class PacketBinary
 
         foreach (IPacketProvider provider in Providers)
         {
-            provider.Write(writer, type, value!, out bool success);
+            provider.Write(writer, type, value, out bool success);
             if (success)
                 return;
         }
     }
 
-    public static T Read<T>(BinaryReader reader)
+    public static T Read<T>(this BinaryReader reader)
         => (T)Read(reader, typeof(T));
 
-    public static void Write<T>(BinaryWriter writer, T value)
+    public static void Write<T>(this BinaryWriter writer, T value)
         => Write(writer, typeof(T), value);
 }

@@ -5,6 +5,7 @@
         <AssemblyName>com.rhythmdr.editorcoop</AssemblyName>
         <Product>EditorCoop</Product>
         <Version>0.0.1</Version>
+        <nullable>disable</nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <RestoreAdditionalProjectSources>

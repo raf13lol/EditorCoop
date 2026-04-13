@@ -1,3 +1,4 @@
+using EditorCoop.Functionality;
 using EditorCoop.Functionality.Handlers.Events;
 using HarmonyLib;
 using RDLevelEditor;
@@ -24,20 +25,77 @@ public class TestingPatch : Patch
                     Events = [
                         new()
                         {
-                            EventUID = 123,
-                            EventType = LevelEventType.Move,
+                            UID = 123,
+                            EventType = LevelEventType.MoveRow,
 
                             Bar = 2,
                             Beat = 3,
 
-                            Tab = Tab.Sprites,
+                            Tab = Tab.Actions,
                             Y = 0,
                             SubRowY = 0,
 
-                            Row = null,
-                            Target = __instance.spritesData[0].spriteId,
+                            Row = 0,
+                            Target = "",
 
                             CopyEventUID = null
+                        }
+                    ]
+                });
+            }
+            if (Input.GetKeyDown(KeyCode.F3))
+            {
+                MoveEventsHandler.Run(new()
+                {
+                    Movements = [
+                        new()
+                        {
+                            UID = 123,
+
+                            Bar = 1,
+                            Beat = 1,
+
+                            Y = 2,
+                            SubRowY = 0,
+
+                            Row = 0,
+                            Target = ""
+                        }
+                    ]
+                });
+            }
+            if (Input.GetKeyDown(KeyCode.F4))
+            {
+                DeleteEventsHandler.Run(new()
+                {
+                    UIDs = [123]
+                });
+            }
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                EditEventsHandler.Run(new()
+                {
+                    Edits = [
+                        new()
+                        {
+                            FoundUID = true,
+                            LevelEventControl = UIDHolder.UIDToEventControl[123],
+                            LevelEvent = UIDHolder.UIDToEventControl[123].levelEvent,
+                            PropertiesInfo = UIDHolder.UIDToEventControl[123].levelEvent.info.propertiesInfo,
+                            
+                            UID = 123,
+                            PropertiesChanged =
+                            [
+                                new()
+                                {
+                                    Index = 0,
+                                    Value = MoveRowTarget.Heart
+                                }
+                            ],
+                            BaseProperties = new()
+                            {
+                                RunTagNormally = false
+                            }
                         }
                     ]
                 });

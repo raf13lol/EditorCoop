@@ -14,4 +14,14 @@ public class Handler
         IsThereChangesToSave.SetValue(Editor, true);
         Editor.unsavedIndicatorCheck = true;
     }
+
+    protected static void InspectorPanelUpdateUI()
+    {
+        if (Editor.selectedControls.Count == 0)
+            Editor.currentTabSection.ShowNothingSelectedPanel();
+        else if (Editor.selectedControls.Count > 1)
+            Editor.currentTabSection.ShowMultipleSelectedPanel();
+        else
+            Editor.selectedControl.ShowDataOnInspector();
+    }
 }
