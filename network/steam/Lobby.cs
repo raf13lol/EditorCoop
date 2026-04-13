@@ -1,5 +1,5 @@
 using System;
-using EditorCoop;
+using EditorCoop.Patches;
 using Network.Packets;
 using Steamworks;
 

@@ -1,12 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using EditorCoop.Patches;
 using Network.Packets;
-using EditorCoop.Functionality.Network.Packets;
 using Network.Steam;
 using Steamworks;
-using EditorCoop.Functionality.Network;
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Collections.Generic;
 
 namespace EditorCoop.Functionality;
 
@@ -42,10 +40,7 @@ public class PacketReadHandler
             return;
         }
 
-        if (handlePacketMethod.GetParameters().Length == 2)
-            handlePacketMethod.Invoke(null, [packet, user]);
-        else    
-            handlePacketMethod.Invoke(null, [packet]);
+        handlePacketMethod.Invoke(null, [packet]);
     }
 
     public static void HandleReplication(byte[] data, SteamNetworkingIdentity originalUser)

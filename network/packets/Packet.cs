@@ -1,9 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using EditorCoop;
-using EditorCoop.Functionality.Network.Packets;
 
 namespace Network.Packets;
 

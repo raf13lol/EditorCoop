@@ -1,4 +1,4 @@
-using EditorCoop.Functionality.Network.Packets;
+using EditorCoop.Functionality.Packets.Version;
 using Network.Steam;
 
 namespace EditorCoop.Functionality.Handlers.Version;

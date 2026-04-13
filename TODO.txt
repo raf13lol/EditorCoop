@@ -1,0 +1,1 @@
+Handle edge case in CreateEvents where if the copied event is deleted before CreateEvents reaches others we have a desync

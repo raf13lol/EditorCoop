@@ -1,12 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using EditorCoop;
 using Network.Packets;
-using EditorCoop.Functionality.Network.Packets;
 using Steamworks;
 
 namespace Network.Steam;

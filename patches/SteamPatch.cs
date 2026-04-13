@@ -1,4 +1,4 @@
-using EditorCoop.Functionality.Network.Packets;
+using EditorCoop.Functionality.Packets.Version;
 using HarmonyLib;
 using Network.Steam;
 using UnityEngine;

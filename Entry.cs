@@ -6,8 +6,6 @@ using BepInEx.Configuration;
 using BepInEx.Unity.Mono;
 #endif
 using EditorCoop.Functionality;
-using EditorCoop.Functionality.Network;
-using EditorCoop.Functionality.Network.Packets;
 using EditorCoop.Patches;
 using HarmonyLib;
 using Network.Packets;
@@ -68,6 +66,7 @@ public class Entry : BaseUnityPlugin
         Patches.Patch.Log = Logger;
 
         SteamPatch.Patch(HarmonyPatcher);
+        TestingPatch.Patch(HarmonyPatcher);
     }
 }
 

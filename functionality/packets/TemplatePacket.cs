@@ -1,7 +1,7 @@
 using System.IO;
 using Network.Packets;
 
-namespace EditorCoop.Functionality.Network.Packets;
+namespace EditorCoop.Functionality.Packets;
 
 public class TemplatePacket() : Packet(PacketType.__Template)
 {

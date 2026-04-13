@@ -5,14 +5,13 @@ using Network.Packets;
 using RDLevelEditor;
 using UnityEngine;
 
-namespace EditorCoop.Functionality.Network;
+namespace EditorCoop.Functionality;
 
 public class RDPacketProvider : IPacketProvider
 {
     private static readonly Func<object, object> FloatExpressionGetExp = AccessTools.Field(typeof(FloatExpression), "exp").GetValue;
     private static readonly Func<object, object> FloatExpressionGetNum = AccessTools.Field(typeof(FloatExpression), "num").GetValue;
     private static readonly Action<object, object> FloatExpressionSetExp = AccessTools.Field(typeof(FloatExpression), "exp").SetValue;
-    private static readonly Action<object, object> FloatExpressionSetNum = AccessTools.Field(typeof(FloatExpression), "num").SetValue;
 
     public object Read(BinaryReader reader, Type type, out bool success)
     {

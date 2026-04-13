@@ -1,12 +1,10 @@
-using BepInEx.Logging;
-using RDEditorPlus;
-using BepInEx;
-#if !BPE5
-using BepInEx.Unity.Mono;
-#endif
+using RDEditorPlus.ExtraData;
+using RDLevelEditor;
 
 namespace EditorCoop.Compatibility;
 
 public class RDEditorPlusCompatibility
 {
+    public static void SetEventSubRowY(LevelEvent_Base levelEvent, int subRowY)
+        => SubRowStorage.Instance.SetSubRow(levelEvent, subRowY);
 }
