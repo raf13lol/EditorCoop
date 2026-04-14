@@ -51,8 +51,8 @@ public class Encoding
 
     public static void Register(PacketMetadata metadata)
     {
-        Metadata[metadata.TypeValue] = metadata;
-        PacketTypeLookup[metadata.Type] = metadata.TypeValue;
+        Metadata.Add(metadata.TypeValue, metadata);
+        PacketTypeLookup.Add(metadata.Type, metadata.TypeValue);
     }
 
     public static byte[] Encode(Packet packet)
