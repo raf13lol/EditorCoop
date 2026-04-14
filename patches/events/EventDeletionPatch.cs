@@ -17,7 +17,7 @@ public class EventDeletionPatch : Patch
     {
         public static void Prefix(LevelEventControl_Base eventControl)
         {
-            if (HandlerInProgress || eventControl.levelEvent.isBaseEvent)
+            if (CalledFromHandler || eventControl.levelEvent.isBaseEvent)
                 return;
 
             Lobby.SendPacketToAll(new DeleteEventsPacket()

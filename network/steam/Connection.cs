@@ -8,7 +8,6 @@ namespace Network.Steam;
 
 public class Connection : IDisposable
 {
-    public static Type PacketTypeEnum;
     public static Packet SessionInitPacket;
 
     public List<SteamNetworkingIdentity> Users = [];
@@ -82,7 +81,7 @@ public class Connection : IDisposable
             Marshal.Copy(message.m_pData, buffer, 0, message.m_cbSize);
             OnDataRead.Invoke(buffer, message.m_identityPeer);
             
-            Packet packet = Packet.Decode(buffer, PacketTypeEnum);
+            Packet packet = Encoding.Decode(buffer);
             OnPacketRead.Invoke(packet, message.m_identityPeer);
 
             SteamNetworkingMessage_t.Release(pointer);
@@ -90,7 +89,7 @@ public class Connection : IDisposable
     }
 
     public bool Send(Packet packet, SteamNetworkingIdentity user)
-        => Send(Packet.Encode(packet), user);
+        => Send(Encoding.Encode(packet), user);
 
     public bool Send(byte[] data, SteamNetworkingIdentity user)
     {

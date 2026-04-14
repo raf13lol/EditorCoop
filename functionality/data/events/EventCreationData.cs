@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using Network.Packets;
 using RDLevelEditor;
@@ -16,7 +14,6 @@ public class EventCreationData() : IPacketData
 
     public Tab Tab;
     public int Y;
-    public int SubRowY;
 
     public int Row;
     public string Target;
@@ -33,7 +30,6 @@ public class EventCreationData() : IPacketData
 
         Tab = reader.Read<Tab>();
         Y = reader.ReadInt32();
-        SubRowY = reader.ReadInt32();
 
         Row = reader.ReadInt32();
         Target = reader.Read<string>();
@@ -51,7 +47,6 @@ public class EventCreationData() : IPacketData
         
         writer.Write(Tab);
         writer.Write(Y);
-        writer.Write(SubRowY);
 
         writer.Write(Row);
         writer.Write<string>(Target);

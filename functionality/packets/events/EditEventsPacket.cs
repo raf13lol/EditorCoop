@@ -5,7 +5,8 @@ using Network.Packets;
 
 namespace EditorCoop.Functionality.Packets.Events;
 
-public class EditEventsPacket() : Packet(PacketType.EditEvents)
+[Packet(PacketType.EditEvents)]
+public class EditEventsPacket() : Packet()
 {
     public List<EventEditData> Edits;
 

@@ -1,4 +1,3 @@
-using EditorCoop.Compatibility;
 using EditorCoop.Functionality.Data.Events;
 using EditorCoop.Functionality.Packets.Events;
 using RDLevelEditor;
@@ -20,9 +19,6 @@ public class MoveEventsHandler : Handler
             levelEvent.beat = move.Beat;
 
             levelEvent.y = move.Y;
-
-            if (PluginCompatibility.RDEditorPlusDetected)
-                RDEditorPlusCompatibility.SetEventSubRowY(levelEvent, move.SubRowY);
 
             levelEvent.row = move.Row;
             levelEvent.target = move.Target;

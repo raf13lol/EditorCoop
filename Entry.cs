@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
@@ -46,19 +48,42 @@ public class Entry : BaseUnityPlugin
         "If the ability to use the editor co-operatively should be enabled.");
 
         if (!Enabled.Value)
-        {
-            // Logger.LogMessage("EditorCoop");
             return;
-        }
 
         // Functionality init
-        Packet.AssemblyTypes = Assembly.GetAssembly(typeof(PacketType)).GetTypes();
         PacketBinary.Providers.Add(new RDPacketProvider());
 
-        Connection.PacketTypeEnum = typeof(PacketType);
+        Assembly thisAssembly = GetType().Assembly;
+        Type[] assemblyTypes = thisAssembly.GetTypes();
 
-        Lobby.PacketReadCallback += PacketReadHandler.OnPacketRead;
-        Lobby.DataReadCallback += PacketReadHandler.HandleReplication;
+        foreach (Type type in assemblyTypes)
+        {
+            if (type.GetCustomAttribute<PacketAttribute>() == null || type.Name.Contains("Template"))
+                continue;
+
+            string packetTypeName = type.Name.Replace("Packet", "");
+            Type handlerType = null;
+
+            try
+            {
+                handlerType = assemblyTypes.First(t => t.Name == $"{packetTypeName}Handler");
+            }
+            catch
+            { 
+                // pointless catch but whatever c#
+            }
+
+            if (handlerType == null)
+            {
+                Logger.LogWarning($"{type.Name} doesn't have a handler. This packet type will not be registered.");
+                continue;
+            }
+            MethodInfo handlerMethod = handlerType.GetMethod("Run", AccessTools.all);
+
+            Encoding.Register(type, packet => handlerMethod.Invoke(null, [packet]));
+        }
+
+        Lobby.DataReadCallback += ReplicationHandler.Run;
 
         // Mod patching init
         HarmonyPatcher = new("EC");

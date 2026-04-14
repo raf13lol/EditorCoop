@@ -15,7 +15,7 @@ public class TemplatePatch : Patch
     {
         public static void Postfix(scnEditor __instance)
         {
-            if (HandlerInProgress)
+            if (CalledFromHandler)
                 return;
         }
     }

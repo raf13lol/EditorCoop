@@ -17,7 +17,7 @@ public class EventEditPatch : Patch
     {
         public static void Prefix(Property __instance, LevelEvent_Base levelEvent, out object __state)
         {
-            if (HandlerInProgress)
+            if (CalledFromHandler)
             {
                 __state = 0;
                 return;
@@ -28,7 +28,7 @@ public class EventEditPatch : Patch
 
         public static void Postfix(Property __instance, LevelEvent_Base levelEvent, object __state)
         {
-            if (HandlerInProgress)
+            if (CalledFromHandler)
                 return;
 
             object change = __instance.propertyInfo.propertyInfo.GetValue(levelEvent);

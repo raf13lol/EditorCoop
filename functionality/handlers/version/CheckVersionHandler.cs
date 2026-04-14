@@ -7,9 +7,7 @@ public class CheckVersionHandler : Handler
 {
     public static void Run(CheckVersionPacket packet)
     {
-        if (packet.IsEditorLobby 
-        && packet.Commit == Releases.buildCommit 
-        && packet.PluginVersion == MyPluginInfo.PLUGIN_VERSION)
+        if (packet.IsEditorLobby && packet.Commit == Releases.buildCommit)
             return;
             
         Lobby.LeaveLobby();        

@@ -1,9 +1,10 @@
 using System.IO;
 using Network.Packets;
 
-namespace EditorCoop.Functionality.Packets;
+namespace EditorCoop.Functionality.Packets.Assets;
 
-public class SyncAssetsPacket() : Packet(PacketType.SyncAssets)
+[Packet(PacketType.SyncAssets)]
+public class SyncAssetsPacket() : Packet()
 {   
     public bool Finished;
     public byte[] Fragment;

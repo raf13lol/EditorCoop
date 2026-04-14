@@ -1,5 +1,4 @@
 using System;
-using EditorCoop.Compatibility;
 using EditorCoop.Functionality.Data.Events;
 using EditorCoop.Functionality.Packets.Events;
 using RDLevelEditor;
@@ -22,8 +21,6 @@ public class CreateEventsHandler : Handler
 
             newEvent.tab = newEventData.Tab;
             newEvent.y = newEventData.Y;
-            if (PluginCompatibility.RDEditorPlusDetected)
-                RDEditorPlusCompatibility.SetEventSubRowY(newEvent, newEventData.SubRowY);
 
             newEvent.row = newEventData.Row;
             newEvent.target = newEventData.Target;

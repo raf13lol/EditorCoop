@@ -4,7 +4,8 @@ using Network.Packets;
 
 namespace EditorCoop.Functionality.Packets.Events;
 
-public class DeleteEventsPacket() : Packet(PacketType.DeleteEvents)
+[Packet(PacketType.DeleteEvents)]
+public class DeleteEventsPacket() : Packet()
 {
     public List<int> UIDs;
 

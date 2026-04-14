@@ -94,7 +94,7 @@ public class Lobby
         if (Connection == null)
             return false;
 
-        byte[] data = Packet.Encode(packet);
+        byte[] data = Encoding.Encode(packet);
         bool result = true;
         foreach (SteamNetworkingIdentity user in Connection.Users)
            result = Connection.Send(data, user) && result;

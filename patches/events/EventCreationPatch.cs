@@ -18,7 +18,7 @@ public class EventCreationPatch : Patch
     {
         public static void Postfix(scnEditor __instance, LevelEventControl_Base eventControl)
         {
-            if (HandlerInProgress || eventControl.levelEvent.isBaseEvent)
+            if (CalledFromHandler || eventControl.levelEvent.isBaseEvent)
                 return;
 
             LevelEvent_Base levelEvent = eventControl.levelEvent;
@@ -35,7 +35,6 @@ public class EventCreationPatch : Patch
 
                         Tab = levelEvent.tab,
                         Y = levelEvent.y,
-                        SubRowY = 0,
 
                         Row = levelEvent.row,
                         Target = levelEvent.target,

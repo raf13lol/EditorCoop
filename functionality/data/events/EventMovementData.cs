@@ -11,7 +11,6 @@ public class EventMovementData() : IPacketData
     public float Beat;
 
     public int Y;
-    public int SubRowY;
 
     public int Row;
     public string? Target;
@@ -24,7 +23,6 @@ public class EventMovementData() : IPacketData
         Beat = reader.ReadSingle();
 
         Y = reader.ReadInt32();
-        SubRowY = reader.ReadInt32();
 
         Row = reader.ReadInt32();
         Target = reader.Read<string?>();
@@ -38,7 +36,6 @@ public class EventMovementData() : IPacketData
         writer.Write(Beat);
         
         writer.Write(Y);
-        writer.Write(SubRowY);
 
         writer.Write(Row);
         writer.Write<string?>(Target);

@@ -17,7 +17,7 @@ public class EventMovementPatch : Patch
     {
         public static void Postfix(LevelEventControlEventTrigger __instance)
         {
-            if (HandlerInProgress)
+            if (CalledFromHandler)
                 return; 
 
             LevelEvent_Base levelEvent = __instance.control.levelEvent;
@@ -35,7 +35,6 @@ public class EventMovementPatch : Patch
                         Beat = levelEvent.beat,
 
                         Y = levelEvent.y,
-                        SubRowY = 0,
 
                         Row = levelEvent.row,
                         Target = levelEvent.target

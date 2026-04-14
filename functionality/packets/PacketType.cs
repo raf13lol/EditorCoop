@@ -1,8 +1,6 @@
+namespace EditorCoop.Functionality.Packets;
 
-
-namespace EditorCoop.Functionality;
-
-public enum PacketType : byte
+public enum PacketType : ushort
 {
     CheckVersion,
     
@@ -23,9 +21,6 @@ public enum PacketType : byte
     MoveSprites,
     DeleteSprites,
 
-    CreateWindows,
-    DeleteWindows,
-
     CreateConditionals,
     EditConditionals,
     DeleteConditionals,
@@ -37,8 +32,6 @@ public enum PacketType : byte
     SyncAssetHashes,
     RequestAssets,
     SyncAssets,
-
-    Custom,
 
     __Template,
 }

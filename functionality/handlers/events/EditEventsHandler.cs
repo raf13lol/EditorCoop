@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using EditorCoop.Functionality.Data.Events;
 using EditorCoop.Functionality.Packets.Events;
-using EditorCoop.Patches;
 using RDLevelEditor;
 
 namespace EditorCoop.Functionality.Handlers.Events;

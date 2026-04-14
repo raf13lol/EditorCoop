@@ -29,8 +29,7 @@ public class SteamPatch : Patch
             Connection.SessionInitPacket = new CheckVersionPacket()
             {
                 IsEditorLobby = true,
-                Commit = Releases.buildCommit,
-                PluginVersion = MyPluginInfo.PLUGIN_VERSION
+                Commit = Releases.buildCommit
             };
         }
     }

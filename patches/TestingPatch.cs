@@ -33,7 +33,6 @@ public class TestingPatch : Patch
 
                             Tab = Tab.Actions,
                             Y = 0,
-                            SubRowY = 0,
 
                             Row = 0,
                             Target = "",
@@ -56,7 +55,6 @@ public class TestingPatch : Patch
                             Beat = 1,
 
                             Y = 2,
-                            SubRowY = 0,
 
                             Row = 0,
                             Target = ""

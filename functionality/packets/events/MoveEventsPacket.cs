@@ -5,7 +5,8 @@ using Network.Packets;
 
 namespace EditorCoop.Functionality.Packets.Events;
 
-public class MoveEventsPacket() : Packet(PacketType.MoveEvents)
+[Packet(PacketType.MoveEvents)]
+public class MoveEventsPacket() : Packet()
 {
     public List<EventMovementData> Movements;
 
