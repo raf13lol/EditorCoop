@@ -91,11 +91,7 @@ public class TestingPatch : Patch
                                     Index = 0,
                                     Value = MoveRowTarget.Heart
                                 }
-                            ],
-                            BaseProperties = new()
-                            {
-                                RunTagNormally = false
-                            }
+                            ]
                         }
                     ]
                 });

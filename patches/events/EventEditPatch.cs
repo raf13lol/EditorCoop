@@ -48,11 +48,7 @@ public class EventEditPatch : Patch
                                 Index = levelEvent.info.propertiesInfo.IndexOf(__instance.propertyInfo),
                                 Value = change
                             }
-                        ],
-                        BaseProperties = new()
-                        {
-                            RunTagNormally = levelEvent.tagRunNormally
-                        }
+                        ]
                     }
                 ]
             });

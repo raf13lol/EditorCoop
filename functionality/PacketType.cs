@@ -11,16 +11,15 @@ public enum PacketType : byte
 
     CreateEvents,
     EditEvents,
+    EditBaseEvents,
     MoveEvents,
     DeleteEvents,
 
     CreateRows,
-    EditRows,
     MoveRows,
     DeleteRows,
 
     CreateSprites,
-    EditSprites,
     MoveSprites,
     DeleteSprites,
 
@@ -35,8 +34,11 @@ public enum PacketType : byte
     SyncLevelSettings,
 
     RequestAssetHashes,
+    SyncAssetHashes,
     RequestAssets,
     SyncAssets,
+
+    Custom,
 
     __Template,
 }

@@ -17,7 +17,6 @@ public class EventEditData() : IPacketData
     public int UID;
 
     public List<PropertyEditData> PropertiesChanged;
-    public BasePropertiesEditData BaseProperties;
 
     public void Decode(BinaryReader reader)
     {
@@ -50,8 +49,6 @@ public class EventEditData() : IPacketData
                 Value = value
             });
         }
-
-        BaseProperties = reader.Read<BasePropertiesEditData>();
     }
 
     public void Encode(BinaryWriter writer)
@@ -69,8 +66,6 @@ public class EventEditData() : IPacketData
             writer.Write(editData.Index);
             writer.Write(PropertiesInfo[editData.Index].propertyInfo.PropertyType, editData.Value);
         }
-
-        writer.Write(BaseProperties);
 
         long endPosition = writer.BaseStream.Position;
         int offset = (int)(endPosition - offsetPosition);

@@ -80,10 +80,10 @@ public class Connection : IDisposable
 
             byte[] buffer = new byte[message.m_cbSize];
             Marshal.Copy(message.m_pData, buffer, 0, message.m_cbSize);
+            OnDataRead.Invoke(buffer, message.m_identityPeer);
             
             Packet packet = Packet.Decode(buffer, PacketTypeEnum);
             OnPacketRead.Invoke(packet, message.m_identityPeer);
-            OnDataRead.Invoke(buffer, message.m_identityPeer);
 
             SteamNetworkingMessage_t.Release(pointer);
         }
