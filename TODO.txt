@@ -1,4 +1,3 @@
 Handle edge case in CreateEvents where if the copied event is deleted before CreateEvents reaches others we have a desync
-Floating text needs a bit of work
-
-Update packets to use row uid
+Floating text needs to be tested
+Rows need to be tested

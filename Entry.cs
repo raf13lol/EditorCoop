@@ -6,6 +6,8 @@ using BepInEx;
 using BepInEx.Configuration;
 #if !BPE5
 using BepInEx.Unity.Mono;
+using EditorCoop.Functionality.Handlers;
+
 #endif
 using EditorCoop.Functionality.Packets;
 using HarmonyLib;
@@ -77,12 +79,14 @@ public class Entry : BaseUnityPlugin
                 continue;
             }
             MethodInfo handlerMethod = handlerType.GetMethod("Run", AccessTools.all);
-
-            Encoding.Register(type, packet => handlerMethod.Invoke(null, [packet]));
+            if (handlerMethod == null || handlerMethod.GetCustomAttribute<DisableAutoHandlerAttribute>() != null)
+                Encoding.Register(type);
+            else
+                Encoding.Register(type, packet => handlerMethod.Invoke(null, [packet]));
         }
 
         // needs to have a dummy function to avoid errors...
-        Lobby.PacketReadCallback += (packet, user) => {};
+        Lobby.PacketReadCallback += (packet, user) => { };
         Lobby.DataReadCallback += ReplicationHandler.Run;
 
         // Mod patching init

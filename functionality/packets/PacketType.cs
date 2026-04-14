@@ -33,5 +33,9 @@ public enum PacketType : ushort
     RequestAssets,
     SyncAssets,
 
+    // Hm ? there's no 'u' in 'colour' ? I don't know what you're on about.
+    SyncSelectedColour,
+    SyncSelectedEvents,
+
     __Template,
 }

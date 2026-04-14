@@ -25,7 +25,7 @@ public class EventMovementData() : IPacketData
         Y = reader.ReadInt32();
 
         Row = reader.ReadInt32();
-        Target = reader.Read<string?>();
+        Target = reader.Read<string>();
     }
 
     public void Encode(BinaryWriter writer)
@@ -38,6 +38,6 @@ public class EventMovementData() : IPacketData
         writer.Write(Y);
 
         writer.Write(Row);
-        writer.Write<string?>(Target);
+        writer.Write<string>(Target);
     }
 }
