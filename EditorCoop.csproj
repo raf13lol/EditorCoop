@@ -56,9 +56,6 @@
         <Reference Include="com.rlabrecque.steamworks.net" IncludeAssets="compile">
             <HintPath>lib\com.rlabrecque.steamworks.net.dll</HintPath>
         </Reference>
-        <Reference Include="RDEditorPlus" IncludeAssets="compile">
-            <HintPath>lib\RDEditorPlus.dll</HintPath>
-        </Reference>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">

@@ -2,4 +2,6 @@ copy:
 UnityEngine.CoreModule.dll
 UnityEngine.dll
 Assembly-CSharp.dll
+RDTools.dll
+com.rlabrecque.steamworks.net.dll
 from Rhythm Doctor_Data\Managed
