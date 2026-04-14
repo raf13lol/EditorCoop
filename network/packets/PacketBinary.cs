@@ -96,8 +96,7 @@ public static class PacketBinary
 
         foreach (IPacketProvider provider in Providers)
         {
-            object value = provider.Read(reader, type, out bool success);
-            if (success)
+            if (provider.Read(reader, type, out object value))
                 return value;
         }
         return 0;
@@ -197,8 +196,7 @@ public static class PacketBinary
 
         foreach (IPacketProvider provider in Providers)
         {
-            provider.Write(writer, type, value, out bool success);
-            if (success)
+            if (provider.Write(writer, type, value))
                 return;
         }
     }

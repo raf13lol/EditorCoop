@@ -13,26 +13,26 @@ public class RDPacketProvider : IPacketProvider
     private static readonly Func<object, object> FloatExpressionGetNum = AccessTools.Field(typeof(FloatExpression), "num").GetValue;
     private static readonly Action<object, object> FloatExpressionSetExp = AccessTools.Field(typeof(FloatExpression), "exp").SetValue;
 
-    public object Read(BinaryReader reader, Type type, out bool success)
+    public bool Read(BinaryReader reader, Type type, out object value)
     {
-        success = true;
-
         if (type == typeof(ColorOrPalette))
         {
             bool isPalette = reader.ReadBoolean();
             if (isPalette)
             {
                 int index = reader.ReadInt32();
-                return ColorOrPalette.FromString("pal" + index);
+                value = ColorOrPalette.FromString("pal" + index);
+                return true;
             }
 
             float r = reader.ReadSingle();
             float g = reader.ReadSingle();
             float b = reader.ReadSingle();
             float a = reader.ReadSingle();
-            
+
             Color colour = new(r, g, b, a);
-            return (ColorOrPalette)colour;
+            value = (ColorOrPalette)colour;
+            return true;
         }
 
         if (type == typeof(SoundDataStruct))
@@ -44,21 +44,24 @@ public class RDPacketProvider : IPacketProvider
             int offset = reader.ReadInt32();
             bool used = reader.ReadBoolean();
 
-            return new SoundDataStruct(filename, volume, pitch, pan, offset, used);
+            value = new SoundDataStruct(filename, volume, pitch, pan, offset, used);
+            return true;
         }
 
         if (type == typeof(BarAndBeat))
         {
             int bar = reader.ReadInt32();
             float beat = reader.ReadSingle();
-            return new BarAndBeat(bar, beat);
+            value = new BarAndBeat(bar, beat);
+            return true;
         }
 
         if (type == typeof(Vector2))
         {
             float x = reader.ReadSingle();
             float y = reader.ReadSingle();
-            return new Vector2(x, y);
+            value = new Vector2(x, y);
+            return true;
         }
 
         if (type == typeof(Float2))
@@ -73,7 +76,8 @@ public class RDPacketProvider : IPacketProvider
             if (f2.yUsed = y != null)
                 f2.y = (float)y;
 
-            return f2;
+            value = f2;
+            return true;
         }
 
         if (type == typeof(FloatExpression))
@@ -88,24 +92,25 @@ public class RDPacketProvider : IPacketProvider
             }
             else
                 fexp = new(reader.ReadSingle());
-            return fexp;
+            value = fexp;
+            return true;
         }
 
         if (type == typeof(FloatExpression2))
         {
-            FloatExpression x = (FloatExpression)Read(reader, typeof(FloatExpression), out bool _);
-            FloatExpression y = (FloatExpression)Read(reader, typeof(FloatExpression), out bool _);
-            return new FloatExpression2(x, y);
+            Read(reader, typeof(FloatExpression), out object x);
+            Read(reader, typeof(FloatExpression), out object y);
+            
+            value = new FloatExpression2((FloatExpression)x, (FloatExpression)y);
+            return true;
         }
 
-        success = false;
-        return 0;
+        value = null;
+        return false;
     }
 
-    public void Write(BinaryWriter writer, Type type, object value, out bool success)
+    public bool Write(BinaryWriter writer, Type type, object value)
     {
-        success = true;
-
         if (type == typeof(ColorOrPalette))
         {
             ColorOrPalette col = (ColorOrPalette)value;
@@ -115,7 +120,7 @@ public class RDPacketProvider : IPacketProvider
             if (isPalette)
             {
                 writer.Write(col.GetIndex());
-                return;
+                return true;
             }
 
             Color colour = col.ToColor();
@@ -124,7 +129,7 @@ public class RDPacketProvider : IPacketProvider
             writer.Write(colour.g);
             writer.Write(colour.b);
             writer.Write(colour.a);
-            return;
+            return true;
         }
 
         if (type == typeof(SoundDataStruct))
@@ -137,7 +142,7 @@ public class RDPacketProvider : IPacketProvider
             writer.Write(sound.pan);
             writer.Write(sound.offset);
             writer.Write(sound.used);
-            return;
+            return true;
         }
 
         if (type == typeof(BarAndBeat))
@@ -146,7 +151,7 @@ public class RDPacketProvider : IPacketProvider
 
             writer.Write(barAndBeat.bar);
             writer.Write(barAndBeat.beat);
-            return;
+            return true;
         }
 
         if (type == typeof(Vector2))
@@ -155,7 +160,7 @@ public class RDPacketProvider : IPacketProvider
 
             writer.Write(vec.x);
             writer.Write(vec.y);
-            return;
+            return true;
         }
 
         if (type == typeof(Float2))
@@ -166,7 +171,7 @@ public class RDPacketProvider : IPacketProvider
 
             PacketBinary.Write(writer, x);
             PacketBinary.Write(writer, y);
-            return;
+            return true;
         }
 
         if (type == typeof(FloatExpression))
@@ -178,18 +183,18 @@ public class RDPacketProvider : IPacketProvider
                 writer.Write((string)FloatExpressionGetExp(fexp));
             else
                 writer.Write((float)FloatExpressionGetNum(fexp));
-            return;
+            return true;
         }
 
         if (type == typeof(FloatExpression2))
         {
             FloatExpression2 fexp2 = (FloatExpression2)value;
 
-            Write(writer, typeof(FloatExpression), fexp2.x, out bool _); 
-            Write(writer, typeof(FloatExpression), fexp2.y, out bool _); 
-            return;
+            Write(writer, typeof(FloatExpression), fexp2.x);
+            Write(writer, typeof(FloatExpression), fexp2.y);
+            return true;
         }
 
-        success = false;
+        return false;
     }
 }
