@@ -1,4 +1,4 @@
-using EditorCoop.Functionality.Packets;
+using EditorCoop.Functionality.Packets.Assets;
 
 namespace EditorCoop.Functionality.Handlers;
 

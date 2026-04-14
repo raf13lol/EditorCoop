@@ -19,8 +19,7 @@ public class Encoding
             Version = 0x00,
             ShouldBeReplicated = false,
 
-            Type = typeof(UnknownPacket),
-            HandlerFunction = null,
+            Type = typeof(UnknownPacket)
         }
     };
 
@@ -29,22 +28,25 @@ public class Encoding
         [typeof(UnknownPacket)] = UnknownPacketTypeValue
     };
 
-    public static void Register(Type packetType, Action<Packet>? handlerFunction = null)
+    public static void Register(Type packetType, params PacketMetadata.PacketHandler[] handlerFunctions)
     {
         PacketAttribute attribute = packetType.GetCustomAttribute<PacketAttribute>();
         if (attribute == null)
             throw new ArgumentException($"{packetType.Name} does not have a {nameof(PacketAttribute)} attribute.");
-            
-        Register(new()
+
+        PacketMetadata metadata = new()
         {
             Type = packetType,
 
             TypeValue = attribute.TypeValue,
             Version = attribute.Version,
-            ShouldBeReplicated = attribute.ShouldBeReplicated,
+            ShouldBeReplicated = attribute.ShouldBeReplicated
+        };
 
-            HandlerFunction = handlerFunction,
-        });
+        foreach (PacketMetadata.PacketHandler handlerFunction in handlerFunctions)
+            metadata.HandlerFunction += handlerFunction;
+
+        Register(metadata);
     }
 
     public static void Register(PacketMetadata metadata)
@@ -85,12 +87,9 @@ public class Encoding
         packet.Version = version;
         packet.ShouldBeReplicated = shouldBeReplicated;
 
-        if (metadata.HandlerFunction != null)
-        {
-            CallingHandler = true;
-            metadata.HandlerFunction(packet);
-            CallingHandler = false;
-        }
+        CallingHandler = true;
+        metadata.CallHandler(packet);
+        CallingHandler = false;
 
         return packet;
     }

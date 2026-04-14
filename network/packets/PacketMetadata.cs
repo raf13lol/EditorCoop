@@ -10,5 +10,11 @@ public class PacketMetadata
     public byte Version;
     public bool ShouldBeReplicated;
 
-    public Action<Packet>? HandlerFunction = null;
+    public delegate void PacketHandler(Packet packet);
+    public event PacketHandler HandlerFunction;
+
+    internal void CallHandler(Packet packet)
+    {
+        HandlerFunction(packet);
+    }
 }
