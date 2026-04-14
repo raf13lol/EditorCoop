@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using EditorCoop.Patches;
 using Network.Packets;
 using Steamworks;
@@ -43,6 +44,19 @@ public class Lobby
         SessionRequestCallback = Callback<SteamNetworkingMessagesSessionRequest_t>.Create(SessionRequest);
 
         CheckForCommandLineJoin();
+
+        IntPtr intPtr = Marshal.AllocHGlobal(4);
+        Marshal.WriteInt32(intPtr, 524288 * 2 * 64); // 64MiB of sendbuffersize
+
+        SteamNetworkingUtils.SetConfigValue(
+            ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_SendBufferSize,
+            ESteamNetworkingConfigScope.k_ESteamNetworkingConfig_Global,
+            IntPtr.Zero,
+            ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32,
+            intPtr
+        );
+
+        Marshal.FreeHGlobal(intPtr);
     }
 
     private static void CheckForCommandLineJoin()
@@ -81,15 +95,16 @@ public class Lobby
     {
         if (!InLobby)
             return;
+        Patch.Log.LogMessage($"Left lobby {(ulong)LobbySteamID} via LeaveLobby()");
 
         SteamMatchmaking.LeaveLobby(LobbySteamID);
         InLobby = false;
 
-        Connection.Dispose();
+        Connection?.Dispose();
         Connection = null;
     }
 
-    public static bool SendPacketToAll(Packet packet)
+    public static bool SendPacketToAll(Packet packet, MessageFlags messageFlags = MessageFlags.Reliable)
     {
         if (Connection == null)
             return false;
@@ -97,7 +112,7 @@ public class Lobby
         byte[] data = Encoding.Encode(packet);
         bool result = true;
         foreach (SteamNetworkingIdentity user in Connection.Users)
-           result = Connection.Send(data, user) && result;
+            result = Connection.Send(data, user, messageFlags) && result;
         return result;
     }
 
@@ -139,7 +154,7 @@ public class Lobby
             if (!IsHost)
                 return;
             SteamNetworkingIdentity newUser = new();
-            newUser.SetSteamID64(message.m_ulSteamIDUserChanged); 
+            newUser.SetSteamID64(message.m_ulSteamIDUserChanged);
             Connection.SendSessionInitPacket(newUser);
             return;
         }

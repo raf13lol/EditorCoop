@@ -6,9 +6,8 @@ using BepInEx;
 using BepInEx.Configuration;
 #if !BPE5
 using BepInEx.Unity.Mono;
-using EditorCoop.Functionality.Handlers;
-
 #endif
+using EditorCoop.Functionality.Handlers;
 using EditorCoop.Functionality.Packets;
 using HarmonyLib;
 using Network.Packets;

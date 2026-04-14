@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using EditorCoop.Patches;
 using Network.Packets;
 using Steamworks;
 
@@ -91,14 +92,14 @@ public class Connection : IDisposable
     public bool Send(Packet packet, SteamNetworkingIdentity user)
         => Send(Encoding.Encode(packet), user);
 
-    public bool Send(byte[] data, SteamNetworkingIdentity user)
+    public bool Send(byte[] data, SteamNetworkingIdentity user, MessageFlags messageFlags = MessageFlags.Reliable)
     {
         EResult result;
 
         unsafe
         {
             fixed (byte* pointer = data)
-                result = SteamNetworkingMessages.SendMessageToUser(ref user, (IntPtr)pointer, (uint)data.Length, (int)MessageFlags.Reliable, 1);
+                result = SteamNetworkingMessages.SendMessageToUser(ref user, (IntPtr)pointer, (uint)data.Length, (int)messageFlags, 1);
         }
 
         return result == EResult.k_EResultOK;

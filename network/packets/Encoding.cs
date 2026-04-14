@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using EditorCoop.Patches;
 
 namespace Network.Packets;
 
@@ -65,7 +66,7 @@ public class Encoding
         writer.Write(packet.ShouldBeReplicated);
         packet.Encode(writer);
 
-        return stream.GetBuffer();
+        return stream.ToArray();
     }
 
     public static Packet Decode(byte[] data)
@@ -86,6 +87,8 @@ public class Encoding
         packet.TypeValue = packetTypeValue;
         packet.Version = version;
         packet.ShouldBeReplicated = shouldBeReplicated;
+
+        Patch.Log.LogMessage($"{packet.GetType().Name} decoded");
 
         CallingHandler = true;
         metadata.CallHandler(packet);

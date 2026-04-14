@@ -1,6 +1,9 @@
+using System.Linq;
 using EditorCoop.Functionality;
 using EditorCoop.Functionality.Handlers.Events;
+using EditorCoop.Functionality.Packets.Assets;
 using HarmonyLib;
+using Network.Steam;
 using RDLevelEditor;
 using UnityEngine;
 
@@ -88,6 +91,13 @@ public class TestingPatch : Patch
                         }
                     ]
                 });
+            }
+            if (Input.GetKeyDown(KeyCode.F7))
+            {
+                LevelEventControl_Base control = __instance.eventControls.First(c => c.levelEvent.type == LevelEventType.PlaySong);
+                string testFileName = ((LevelEvent_PlaySong)control.levelEvent).song.filename;
+                foreach (SyncAssetsPacket packet in AssetManager.CreateSyncAssetsPackets([testFileName]))
+                    Lobby.SendPacketToAll(packet, MessageFlags.Reliable | MessageFlags.NoNagle);
             }
         }
     }

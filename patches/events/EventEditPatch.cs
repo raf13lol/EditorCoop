@@ -29,7 +29,7 @@ public class EventEditPatch : Patch
             object change = __instance.propertyInfo.propertyInfo.GetValue(levelEvent);
             if (__state.Equals(change))
                 return;
-                
+            
             Lobby.SendPacketToAll(new EditEventsPacket()
             {
                 Edits = [
