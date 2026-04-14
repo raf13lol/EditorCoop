@@ -54,11 +54,11 @@ public class Entry : BaseUnityPlugin
         PacketBinary.Providers.Add(new RDPacketProvider());
 
         Assembly thisAssembly = GetType().Assembly;
-        Type[] assemblyTypes = thisAssembly.GetTypes();
+        Type[] assemblyTypes = [.. thisAssembly.GetTypes().Where(t => !t.Name.Contains("Template"))];
 
         foreach (Type type in assemblyTypes)
         {
-            if (type.GetCustomAttribute<PacketAttribute>() == null || type.Name.Contains("Template"))
+            if (type.GetCustomAttribute<PacketAttribute>() == null)
                 continue;
 
             string packetTypeName = type.Name.Replace("Packet", "");
@@ -69,7 +69,7 @@ public class Entry : BaseUnityPlugin
                 handlerType = assemblyTypes.First(t => t.Name == $"{packetTypeName}Handler");
             }
             catch
-            { 
+            {
                 // pointless catch but whatever c#
             }
 
@@ -83,6 +83,8 @@ public class Entry : BaseUnityPlugin
             Encoding.Register(type, packet => handlerMethod.Invoke(null, [packet]));
         }
 
+        // needs to have a dummy function to avoid errors...
+        Lobby.PacketReadCallback += (packet, user) => {};
         Lobby.DataReadCallback += ReplicationHandler.Run;
 
         // Mod patching init
@@ -91,13 +93,20 @@ public class Entry : BaseUnityPlugin
         PluginInfo = Info;
         Patches.Patch.Log = Logger;
 
-        SteamPatch.Patch(HarmonyPatcher);
-        TestingPatch.Patch(HarmonyPatcher);
+        foreach (Type type in assemblyTypes)
+        {
+            if (type.BaseType != typeof(Patches.Patch))
+                continue;
 
-        EventCreationPatch.Patch(HarmonyPatcher);
-        EventDeletionPatch.Patch(HarmonyPatcher);
-        EventEditPatch.Patch(HarmonyPatcher);
-        EventMovementPatch.Patch(HarmonyPatcher);
+            Type[] patchTypes = type.GetNestedTypes(AccessTools.all);
+            foreach (Type patchType in patchTypes)
+            {
+                if (patchType.GetCustomAttribute<HarmonyPatch>() == null)
+                    continue;
+                HarmonyPatcher.PatchAll(patchType);
+            }
+
+        }
     }
 }
 

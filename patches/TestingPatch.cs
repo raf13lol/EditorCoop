@@ -8,11 +8,6 @@ namespace EditorCoop.Patches;
 
 public class TestingPatch : Patch
 {
-    public static void Patch(Harmony patcher)
-    {
-        patcher.PatchAll(typeof(TestingUpdatePatch));
-    }
-
     [HarmonyPatch(typeof(scnEditor), "Update")]
     public class TestingUpdatePatch
     {

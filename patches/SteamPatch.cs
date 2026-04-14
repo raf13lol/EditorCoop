@@ -7,13 +7,6 @@ namespace EditorCoop.Patches;
 
 public class SteamPatch : Patch
 {
-    public static void Patch(Harmony patcher)
-    {
-        patcher.PatchAll(typeof(InitSteamPatch));
-        patcher.PatchAll(typeof(SetSessionInitPacketPatch));
-        patcher.PatchAll(typeof(SteamUpdateCallbacksPatch));
-    }
-
     [HarmonyPatch(typeof(SteamIntegration), nameof(SteamIntegration.Setup))]
     public class InitSteamPatch
     {
@@ -42,7 +35,7 @@ public class SteamPatch : Patch
             SteamIntegration.CheckCallbacks();
             Lobby.Connection?.ReadPackets();
 
-            if (Input.GetKey(KeyCode.F6))
+            if (Input.GetKeyDown(KeyCode.F6))
                 Lobby.CreateLobby();
         }
     }

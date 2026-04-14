@@ -7,11 +7,6 @@ namespace EditorCoop.Patches;
 
 public class EventDeletionPatch : Patch
 {
-    public static void Patch(Harmony patcher)
-    {
-        patcher.PatchAll(typeof(DeleteEventControlPatch));
-    }
-
     [HarmonyPatch(typeof(scnEditor), nameof(scnEditor.DeleteEventControl))]
     public class DeleteEventControlPatch
     {

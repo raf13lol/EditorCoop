@@ -7,11 +7,6 @@ namespace EditorCoop.Patches;
 
 public class EventEditPatch : Patch
 {
-    public static void Patch(Harmony patcher)
-    {
-        patcher.PatchAll(typeof(SavePatch));
-    }
-
     [HarmonyPatch(typeof(Property), nameof(Property.Save))]
     public class SavePatch
     {

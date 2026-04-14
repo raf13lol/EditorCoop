@@ -7,11 +7,6 @@ namespace EditorCoop.Patches;
 
 public class EventMovementPatch : Patch
 {
-    public static void Patch(Harmony patcher)
-    {
-        patcher.PatchAll(typeof(OnEndDragPatch));
-    }
-
     [HarmonyPatch(typeof(LevelEventControlEventTrigger), nameof(LevelEventControlEventTrigger.OnEndDrag))]
     public class OnEndDragPatch
     {

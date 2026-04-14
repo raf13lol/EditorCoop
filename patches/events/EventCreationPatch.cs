@@ -8,11 +8,6 @@ namespace EditorCoop.Patches.Events;
 
 public class EventCreationPatch : Patch
 {
-    public static void Patch(Harmony patcher)
-    {
-        patcher.PatchAll(typeof(AddNewEventControlPatch));
-    }
-
     [HarmonyPatch(typeof(scnEditor), nameof(scnEditor.AddNewEventControl))]
     public class AddNewEventControlPatch
     {

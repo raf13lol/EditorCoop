@@ -15,6 +15,6 @@ public class PacketMetadata
 
     internal void CallHandler(Packet packet)
     {
-        HandlerFunction(packet);
+        HandlerFunction?.Invoke(packet);
     }
 }
