@@ -5,7 +5,7 @@ using Network.Packets;
 using RDLevelEditor;
 using UnityEngine;
 
-namespace EditorCoop.Functionality;
+namespace EditorCoop.Functionality.Packets;
 
 public class RDPacketProvider : IPacketProvider
 {

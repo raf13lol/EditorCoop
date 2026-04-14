@@ -2,7 +2,7 @@ using EditorCoop.Patches;
 using Network.Steam;
 using Steamworks;
 
-namespace EditorCoop.Functionality;
+namespace EditorCoop.Functionality.Packets;
 
 public class ReplicationHandler
 {
