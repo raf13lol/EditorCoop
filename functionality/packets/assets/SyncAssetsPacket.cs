@@ -14,13 +14,15 @@ public class SyncAssetsPacket() : Packet()
     {
         UID = reader.ReadInt32();
         Finished = reader.ReadBoolean();
-        Fragment = reader.Read<byte[]>();
+        int length = reader.ReadInt32();
+        Fragment = reader.ReadBytes(length);
     }
 
     public override void Encode(BinaryWriter writer)
     {
         writer.Write(UID);
         writer.Write(Finished);
-        writer.Write<byte[]>(Fragment);
+        writer.Write(Fragment.Length);
+        writer.Write(Fragment);
     }
 }

@@ -97,7 +97,7 @@ public class TestingPatch : Patch
                 LevelEventControl_Base control = __instance.eventControls.First(c => c.levelEvent.type == LevelEventType.PlaySong);
                 string testFileName = ((LevelEvent_PlaySong)control.levelEvent).song.filename;
                 foreach (SyncAssetsPacket packet in AssetManager.CreateSyncAssetsPackets([testFileName]))
-                    Lobby.SendPacketToAll(packet, MessageFlags.Reliable | MessageFlags.NoNagle);
+                    Lobby.SendPacketToAll(packet/*, MessageFlags.Reliable | MessageFlags.NoNagle*/);
             }
         }
     }
