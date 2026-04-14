@@ -75,7 +75,7 @@ public class Entry : BaseUnityPlugin
 
             if (handlerType == null)
             {
-                Logger.LogWarning($"{type.Name} doesn't have a handler. This packet type will not be registered.");
+                Logger.LogWarning($"{type.Name} doesn't have a handler. It will not be registered.");
                 continue;
             }
             MethodInfo handlerMethod = handlerType.GetMethod("Run", AccessTools.all);
