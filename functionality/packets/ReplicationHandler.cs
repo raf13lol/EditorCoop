@@ -8,7 +8,7 @@ public class ReplicationHandler
 {
     public static void Run(byte[] data, SteamNetworkingIdentity originalUser)
     {
-        Patch.Log.LogMessage("HR called");
+        Patch.Log.LogMessage($"HR called on packet sent from {originalUser.GetSteamID64()}");
         if (!Lobby.IsHost || data[3] == 0x00) // data[3] is ShouldBeReplicated
             return;
 
