@@ -82,7 +82,7 @@ public class Connection : IDisposable
             Marshal.Copy(message.m_pData, buffer, 0, message.m_cbSize);
             OnDataRead.Invoke(buffer, message.m_identityPeer);
             
-            Packet packet = Encoding.Decode(buffer);
+            Packet packet = Encoding.Decode(buffer, true);
             OnPacketRead.Invoke(packet, message.m_identityPeer);
 
             SteamNetworkingMessage_t.Release(pointer);

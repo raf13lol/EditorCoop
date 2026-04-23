@@ -6,6 +6,7 @@ lib/*.dll
 .vscode/*
 .idea/*
 .vs/*
+*.lscache
 
 com.rhythmdr.editorcoop.dll
 com.rhythmdr.bpe5editorcoop.dll

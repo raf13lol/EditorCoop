@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using EditorCoop.Patches;
 
 namespace Network.Packets;
@@ -69,7 +70,7 @@ public class Encoding
         return stream.ToArray();
     }
 
-    public static Packet Decode(byte[] data)
+    public static Packet Decode(byte[] data, bool callHandler = false)
     {
         using MemoryStream stream = new(data);
         using BinaryReader reader = new(stream);
@@ -88,12 +89,45 @@ public class Encoding
         packet.Version = version;
         packet.ShouldBeReplicated = shouldBeReplicated;
 
+        // TODO: remove when release
         Patch.Log.LogMessage($"{packet.GetType().Name} decoded");
 
-        CallingHandler = true;
-        metadata.CallHandler(packet);
-        CallingHandler = false;
+        if (callHandler)
+        {
+            CallingHandler = true;
+            metadata.CallHandler(packet);
+            CallingHandler = false;
+        }
 
         return packet;
+    }
+
+    public static Packet TestEncodeDecode(Packet packet, bool callHandler)
+    {
+        static string bytesToString(byte[] data)
+        {
+            string output = "";
+
+            foreach (byte b in data)
+                output += b.ToString("x2");
+        
+            return output;
+        }
+
+        SHA256 hasher = SHA256.Create();
+
+        byte[] firstEncode = Encode(packet);
+        byte[] firstEncodeHash = hasher.ComputeHash(firstEncode);
+
+        Patch.Log.LogMessage($"First encode test sha256 hash: {bytesToString(firstEncodeHash)}");
+
+        Packet firstDecode = Decode(firstEncode, callHandler);
+
+        byte[] secondEncode = Encode(firstDecode);
+        byte[] secondEncodeHash = hasher.ComputeHash(secondEncode);
+
+        Patch.Log.LogMessage($"Second encode test sha256 hash: {bytesToString(secondEncodeHash)}");
+
+        return Decode(secondEncode, true);
     }
 }
