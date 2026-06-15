@@ -27,7 +27,7 @@ public class EventEditPatch : Patch
                 return;
 
             object change = __instance.propertyInfo.propertyInfo.GetValue(levelEvent);
-            if (__state.Equals(change))
+            if ((__state == null && change == null) || (__state != null && __state.Equals(change)))
                 return;
             
             Lobby.SendPacketToAll(new EditEventsPacket()
