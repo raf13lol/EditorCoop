@@ -1,5 +1,3 @@
-
-
 namespace EditorCoop.Functionality.Data.Events;
 
 public class PropertyEditData()
